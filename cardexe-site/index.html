@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>CardExe — Cartões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --radius: 14px;
+  --bg: oklch(0.16 0.01 290);
+  --fg: oklch(0.97 0.005 300);
+  --card: oklch(0.21 0.012 290);
+  --primary: oklch(0.74 0.15 300);
+  --primary-fg: oklch(0.16 0.02 290);
+  --muted: oklch(0.76 0.02 300);
+  --border: oklch(1 0 0 / 11%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.8 0.14 300);
+  --aurora1: oklch(0.72 0.17 300);
+  --aurora2: oklch(0.82 0.11 330);
+}
+*{box-sizing:border-box;border-color:var(--border)}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--fg);font-family:"Manrope",system-ui,sans-serif;
+  background:
+    radial-gradient(70% 40% at 50% 0%, oklch(0.45 0.22 315 / .55), transparent 70%),
+    repeating-linear-gradient(0deg, oklch(1 0 0 / .025) 0 1px, transparent 1px 3px),
+    var(--bg);
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Sora",system-ui,sans-serif;margin:0}
+.text-gradient{
+  background:linear-gradient(90deg,var(--aurora1),var(--aurora2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-inset-bottom))}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(10px);
+  background:color-mix(in oklab, var(--bg) 70%, transparent);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:38px;height:38px;border-radius:12px;overflow:hidden;flex:none;
+  box-shadow:0 0 18px oklch(0.6 0.2 310 / .6);
+  border:1px solid var(--border);
+}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pill{
+  font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;
+  background:linear-gradient(90deg,var(--aurora1),var(--aurora2));
+  color:var(--primary-fg);box-shadow:0 6px 20px oklch(0.6 0.2 310 / .35);
+}
+
+/* hero */
+.hero{padding:22px 0 8px;text-align:center}
+
+.hero .mask{
+  width:min(70vw, 220px);
+  aspect-ratio:1;
+  height:auto;
+  margin:0 auto 14px;
+  overflow:visible;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  animation:float 5s ease-in-out infinite;
+}
+
+.hero .mask img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  mix-blend-mode:screen;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
+.hero h1{font-size:30px;font-weight:800;line-height:1.1}
+.hero p{color:var(--muted);margin:10px auto 0;max-width:34ch;font-size:14px}
+.features{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.feature{
+  display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--border);
+}
+.feature svg{width:14px;height:14px;color:var(--aurora1)}
+
+/* steps */
+.steps{margin-top:22px;display:flex;flex-direction:column;gap:14px}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;position:relative;overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 0%, oklch(0.55 0.16 300 / .18), transparent 70%);
+}
+.step-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.step-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.step-count{font-size:12px;color:var(--muted);font-weight:600}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.grid.cols-4{grid-template-columns:repeat(2,1fr)}
+.opt{
+  appearance:none;border:1px solid var(--border);background:transparent;color:var(--fg);
+  border-radius:12px;padding:12px 10px;font-family:inherit;font-size:14px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:border-color .15s, background .15s, transform .1s;
+}
+.opt:hover{border-color:color-mix(in oklab,var(--primary) 40%,var(--border))}
+.opt:active{transform:scale(.98)}
+.opt.sel{
+  border-color:transparent;
+  background:linear-gradient(90deg,var(--aurora1),var(--aurora2));
+  color:var(--primary-fg);box-shadow:0 8px 22px oklch(0.6 0.2 310 / .35);
+}
+.opt .tag{font-size:11px;font-weight:700;opacity:.8}
+.opt .price{font-size:12px;font-weight:700;opacity:.85}
+
+/* cartao visual */
+.cartao{
+  margin-top:4px;border-radius:18px;padding:18px 16px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 120% at 100% 0%, oklch(0.45 0.22 315 / .55), transparent 55%),
+    linear-gradient(135deg, oklch(0.24 0.05 300), oklch(0.18 0.03 295));
+  border:1px solid var(--border);
+  box-shadow:0 20px 40px oklch(0 0 0 / .4), inset 0 1px 0 oklch(1 0 0 / .06);
+}
+.cartao .wm{
+  position:absolute;right:-14px;bottom:-14px;width:110px;height:110px;object-fit:cover;
+  opacity:.55;filter:saturate(1.2);
+  mask-image:radial-gradient(circle at 70% 30%, black 40%, transparent 70%);
+  -webkit-mask-image:radial-gradient(circle at 70% 30%, black 40%, transparent 70%);
+}
+.cartao .row1{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.cartao .chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#d9c27a,#8a6d2f);box-shadow:inset 0 0 0 1px rgba(0,0,0,.3)}
+.cartao .brand-name{font-weight:800;font-size:16px;letter-spacing:.04em}
+.num{
+  font-family:"Sora",monospace;font-size:20px;letter-spacing:.12em;font-weight:600;
+  margin:18px 0 14px;position:relative;z-index:1;cursor:pointer;user-select:none;
+  display:flex;flex-wrap:wrap;gap:0 14px;
+}
+.num .grp{transition:filter .35s ease}
+.num.blurred .grp{filter:blur(4px)}   /* blur LEVE, não total */
+.num .dot{opacity:.6}
+.meta{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
+.meta .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:3px}
+.meta .val{font-size:14px;font-weight:700;letter-spacing:.06em}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+
+.btn{
+  appearance:none;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:15px;
+  border-radius:12px;padding:14px 16px;width:100%;margin-top:14px;
+  background:linear-gradient(90deg,var(--aurora1),var(--aurora2));color:var(--primary-fg);
+  box-shadow:0 10px 26px oklch(0.6 0.2 310 / .4);
+  transition:transform .1s, filter .15s;
+}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:scale(.99)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--input);box-shadow:none}
+
+footer{margin-top:26px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+footer a{color:var(--fg);text-decoration:none;font-weight:600}
+footer .admin-link{display:inline-block;margin-top:8px;opacity:.6;font-size:11px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo"><img id="logoImg" alt="logo"></div>
+      <div>
+        <div id="brandName" style="font-weight:800;font-size:15px">CardExe</div>
+        <div class="badge" id="badge">ANONIMATO</div>
+      </div>
+    </div>
+    <div class="pill" id="statusPill">Disponível</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section class="hero">
+  <div class="mask">
+    <img id="heroMask" src="./mascara.png" alt="máscara">
+  </div>
+
+  <h1 class="text-gradient" id="title">Cartões prontos</h1>
+  <p id="intro">Escolha banco e bandeira. Cartão gerado na hora.</p>
+
+  <div class="features">
+    <span class="feature">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2 3 14h7l-1 8 10-12h-7z"/>
+      </svg>
+      <span id="f1">Acesso rápido</span>
+    </span>
+
+    <span class="feature">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/>
+      </svg>
+      <span id="f2">100% seguro</span>
+    </span>
+
+    <span class="feature">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l2.1-2.1"/>
+      </svg>
+      <span id="f3">Alta qualidade</span>
+    </span>
+  </div>
+</section>
+
+  <section class="steps">
+
+    <!-- PASSO 1 -->
+    <div class="card">
+      <div class="step-head">
+        <div class="step-title" id="s1Title">1 · Escolha o banco</div>
+        <div class="step-count" id="s1Count"></div>
+      </div>
+      <div class="grid" id="bankGrid"></div>
+    </div>
+
+    <!-- PASSO 2 -->
+    <div class="card">
+      <div class="step-head">
+        <div class="step-title" id="s2Title">2 · Escolha a bandeira</div>
+        <div class="step-count" id="s2Count"></div>
+      </div>
+      <div class="grid cols-4" id="flagGrid"></div>
+    </div>
+
+    <!-- PASSO 3 -->
+    <div class="card">
+      <div class="step-head">
+        <div class="step-title" id="s3Title">3 · Seu cartão</div>
+        <div class="step-count" id="s3Count"></div>
+      </div>
+
+      <div class="cartao">
+        <img class="wm" id="cardWm" alt="">
+        <div class="row1">
+          <div class="chip"></div>
+          <div class="brand-name" id="cardBrand">—</div>
+        </div>
+        <div class="num blurred" id="num" title="Toque para revelar">
+          <span class="grp" data-g="0">••••</span>
+          <span class="grp" data-g="1">••••</span>
+          <span class="grp" data-g="2">••••</span>
+          <span class="grp" data-g="3">••••</span>
+        </div>
+        <div class="meta">
+          <div><div class="lbl">Titular</div><div class="val" id="cardName">—</div></div>
+          <div style="text-align:right"><div class="lbl">Validade</div><div class="val" id="cardExp">—</div></div>
+        </div>
+      </div>
+
+      <div class="hint" id="hint">Toque nos números para revelar.</div>
+      <button class="btn" id="genBtn" disabled>Gerar cartão</button>
+      <button class="btn ghost" id="payBtn" style="display:none">Pagar</button>
+    </div>
+
+  </section>
+
+  <footer>
+    <div id="footEmail">contato@cardexe.exemplo</div>
+    <div id="footCopy">© 2026 CardExe · Todos os direitos reservados</div>
+    <a class="admin-link" href="admin.html">admin</a>
+  </footer>
+</div>
+
+<script>
+const KEY = "cardexe_cfg";
+const PASSWORD = "esau2323"; // só p/ referência; login fica no admin.html
+
+const DEFAULTS = {
+  logo: "MASCARA_BASE64_AQUI",
+  brandName: "CardExe",
+  badge: "ANONIMATO",
+  statusPill: "Disponível",
+  title: "Cartões prontos",
+  intro: "Escolha banco e bandeira. Cartão gerado na hora.",
+  f1: "Acesso rápido", f2: "100% seguro", f3: "Alta qualidade",
+  s1Title: "1 · Escolha o banco",
+  s2Title: "2 · Escolha a bandeira",
+  s3Title: "3 · Seu cartão",
+  hint: "Toque nos números para revelar.",
+  genBtn: "Gerar cartão", payBtn: "Pagar",
+  footEmail: "contato@cardexe.exemplo",
+  footCopy: "© 2026 CardExe · Todos os direitos reservados",
+  banks: [
+    {id:"itau",name:"Itaú"},{id:"bradesco",name:"Bradesco"},
+    {id:"santander",name:"Santander"},{id:"caixa",name:"Caixa"},
+    {id:"bb",name:"BB"},{id:"nubank",name:"Nubank"},
+    {id:"inter",name:"Inter"},{id:"sicredi",name:"Sicredi"}
+  ],
+  flags: [
+    {id:"mc",name:"Mastercard",price:49.90,label:"MC",prefix:"5"},
+    {id:"visa",name:"Visa",price:54.90,label:"VISA",prefix:"4"},
+    {id:"elo",name:"Elo",price:44.90,label:"ELO",prefix:"6"},
+    {id:"amex",name:"Amex",price:69.90,label:"AMEX",prefix:"3"}
+  ],
+  checkouts: {} // "banco|bandeira" -> url
+};
+
+function loadCfg(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return structuredClone(DEFAULTS);
+    const c = JSON.parse(raw);
+    return {...structuredClone(DEFAULTS), ...c};
+  }catch(e){ return structuredClone(DEFAULTS); }
+}
+const cfg = loadCfg();
+
+// aplica textos
+const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+const img = (id,v)=>{ const el=document.getElementById(id); if(el && v && v!=="MASCARA_BASE64_AQUI") el.src=v; };
+
+img("logoImg", cfg.logo);
+img("heroMask", cfg.logo);
+img("cardWm", cfg.logo);
+set("brandName",cfg.brandName); set("badge",cfg.badge); set("statusPill",cfg.statusPill);
+set("title",cfg.title); set("intro",cfg.intro);
+set("f1",cfg.f1); set("f2",cfg.f2); set("f3",cfg.f3);
+set("s1Title",cfg.s1Title); set("s2Title",cfg.s2Title); set("s3Title",cfg.s3Title);
+set("hint",cfg.hint);
+document.getElementById("genBtn").textContent = cfg.genBtn;
+document.getElementById("payBtn").textContent = cfg.payBtn;
+set("footEmail",cfg.footEmail); set("footCopy",cfg.footCopy);
+
+// grids
+let selBank=null, selFlag=null;
+const bankGrid=document.getElementById("bankGrid");
+const flagGrid=document.getElementById("flagGrid");
+
+function renderBanks(){
+  bankGrid.innerHTML="";
+  document.getElementById("s1Count").textContent = cfg.banks.length+" bancos";
+  cfg.banks.forEach(b=>{
+    const btn=document.createElement("button");
+    btn.className="opt"+(selBank===b.id?" sel":"");
+    btn.innerHTML=`${b.name}`;
+    btn.onclick=()=>{ selBank=b.id; renderBanks(); renderFlags(); updateGen(); };
+    bankGrid.appendChild(btn);
+  });
+}
+function renderFlags(){
+  flagGrid.innerHTML="";
+  document.getElementById("s2Count").textContent = cfg.flags.length+" bandeiras";
+  cfg.flags.forEach(f=>{
+    const btn=document.createElement("button");
+    btn.className="opt"+(selFlag===f.id?" sel":"");
+    const price = f.price!=null ? `R$ ${Number(f.price).toFixed(2).replace(".",",")}` : "";
+    btn.innerHTML=`<span>${f.label}</span>${price?`<span class="price">${price}</span>`:""}`;
+    btn.onclick=()=>{ selFlag=f.id; renderFlags(); updateGen(); };
+    flagGrid.appendChild(btn);
+  });
+}
+renderBanks(); renderFlags();
+
+function updateGen(){
+  const ok = selBank && selFlag;
+  document.getElementById("genBtn").disabled = !ok;
+  document.getElementById("s3Count").textContent = ok ? `${selBank} · ${selFlag}` : "";
+}
+
+// Luhn
+function luhnDigit(numStr){
+  let sum=0; let alt=false;
+  for(let i=numStr.length-1;i>=0;i--){
+    let d=+numStr[i];
+    if(alt){ d*=2; if(d>9)d-=9; }
+    sum+=d; alt=!alt;
+  }
+  return (10 - (sum%10))%10;
+}
+function rand(n){ return Math.floor(Math.random()*n); }
+function genCard(flag){
+  const prefix = flag.prefix || "4";
+  let body = prefix;
+  for(let i=body.length;i<15;i++) body += rand(10);
+  body += luhnDigit(body);
+  return body;
+}
+function fmt(body){ return body.replace(/(.{4})/g,"$1 ").trim(); }
+
+const numEl=document.getElementById("num");
+let revealed=false;
+numEl.onclick=()=>{ numEl.classList.toggle("blurred"); revealed=!revealed; };
+
+document.getElementById("genBtn").onclick=()=>{
+  const bank = cfg.banks.find(b=>b.id===selBank);
+  const flag = cfg.flags.find(f=>f.id===selFlag);
+  const body = genCard(flag);
+  const groups = [body.slice(0,4),body.slice(4,8),body.slice(8,12),body.slice(12,16)];
+  [...numEl.children].forEach((g,i)=> g.textContent = groups[i]);
+  numEl.classList.add("blurred"); revealed=false;
+
+  document.getElementById("cardBrand").textContent = flag.label;
+  document.getElementById("cardName").textContent = (bank?bank.name:"")+" CARD";
+  const expM = String(rand(12)+1).padStart(2,"0");
+  const expY = String((new Date().getFullYear()+1+rand(4))%100).padStart(2,"0");
+  document.getElementById("cardExp").textContent = `${expM}/${expY}`;
+
+  document.getElementById("genBtn").style.display="none";
+  const pay=document.getElementById("payBtn");
+  pay.style.display="block";
+  const url = cfg.checkouts[`${selBank}|${selFlag}`];
+  pay.onclick=()=>{ if(url) window.open(url,"_blank"); else alert("Checkout não configurado para esta combinação."); };
+};
+</script>
+</body>
+</html>
